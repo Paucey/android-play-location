@@ -42,7 +42,9 @@ public class MainActivity extends AppCompatActivity
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     protected static final String TAG = "MainActivity";
-
+    
+        // I appreciate that the context is being stored here, but why? Especially since it's 
+        // only to be used within this class?
     private Context mContext;
 
     /**
@@ -76,8 +78,12 @@ public class MainActivity extends AppCompatActivity
 
         // Enable either the Request Updates button or the Remove Updates button depending on
         // whether activity updates have been requested.
+                // Want to change this to "toggle" instead of "set".
         setButtonsEnabledState();
 
+                // Alright, so... an array list of objects which are "DetectedActivity" objects.
+                // I assume each object is one of the possible activities. It's called "detectedActivities"
+                // and is... sourced from the Utils class, oddly.
         ArrayList<DetectedActivity> detectedActivities = Utils.detectedActivitiesFromJson(
                 PreferenceManager.getDefaultSharedPreferences(this).getString(
                         Constants.KEY_DETECTED_ACTIVITIES, ""));
@@ -85,7 +91,9 @@ public class MainActivity extends AppCompatActivity
         // Bind the adapter to the ListView responsible for display data for detected activities.
         mAdapter = new DetectedActivitiesAdapter(this, detectedActivities);
         detectedActivitiesListView.setAdapter(mAdapter);
-
+        
+                // Okay, this is the global ActivityRecognitionClient that was declared. A new object
+                // of it is constructed here with the context "this" as the only input.
         mActivityRecognitionClient = new ActivityRecognitionClient(this);
     }
 
@@ -145,12 +153,16 @@ public class MainActivity extends AppCompatActivity
      * {@link ActivityRecognitionClient#removeActivityUpdates(PendingIntent)}. Registers success and
      * failure callbacks.
      */
+     
+                // Really need to check into what Tasks<> are and why it's used here... okay, so it
+                // seems like Tasks allows activities to be opened one after another in a "stack".
     public void removeActivityUpdatesButtonHandler(View view) {
         Task<Void> task = mActivityRecognitionClient.removeActivityUpdates(
                 getActivityDetectionPendingIntent());
         task.addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void result) {
+                // Presents a Toast saying that Activity Updates have been removed.
                 Toast.makeText(mContext,
                         getString(R.string.activity_updates_removed),
                         Toast.LENGTH_SHORT)
@@ -231,7 +243,10 @@ public class MainActivity extends AppCompatActivity
 
         mAdapter.updateActivities(detectedActivities);
     }
-
+    
+        // On shared preference changed... okay, this checks to see if the parameter given equals
+        // KEY_DETECTED_ACTIVITIES from Constants and if so it runs an update on the Activities list.
+        // Ugh, stupid constants. Now I gotta see what this variable is...
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         if (s.equals(Constants.KEY_DETECTED_ACTIVITIES)) {
