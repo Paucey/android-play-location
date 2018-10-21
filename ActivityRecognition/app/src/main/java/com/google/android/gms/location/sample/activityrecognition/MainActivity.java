@@ -39,7 +39,8 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        // Now this next line is interesting... why do this?
+        // Now this next line is interesting... why do this? So it implements the Shared Preferences
+        // On Shared Preferences Change Listener...
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     protected static final String TAG = "MainActivity";
