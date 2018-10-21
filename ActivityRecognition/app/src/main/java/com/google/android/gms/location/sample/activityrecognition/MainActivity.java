@@ -39,6 +39,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
+        // Now this next line is interesting... why do this?
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     protected static final String TAG = "MainActivity";
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity
      */
     private ActivityRecognitionClient mActivityRecognitionClient;
 
-    // UI elements.
+    // UI elements. Straightforward... but why make them Global?
     private Button mRequestActivityUpdatesButton;
     private Button mRemoveActivityUpdatesButton;
 
@@ -68,6 +69,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
+        // Ah, I see. So this is made global so that it can be referenced later on in methods that
+        // otherwise wouldn't have the scope to 
         mContext = this;
 
         // Get the UI widgets.
@@ -246,7 +249,9 @@ public class MainActivity extends AppCompatActivity
     
         // On shared preference changed... okay, this checks to see if the parameter given equals
         // KEY_DETECTED_ACTIVITIES from Constants and if so it runs an update on the Activities list.
-        // Ugh, stupid constants. Now I gotta see what this variable is...
+        // Ugh, stupid constants. Now I gotta see what this variable is... okay, so that resolves to
+        // the Package Name + .DetectedActivities. So if there's a preference change in the detected
+        // activities is asks for an update...
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         if (s.equals(Constants.KEY_DETECTED_ACTIVITIES)) {
